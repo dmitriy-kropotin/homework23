@@ -50,3 +50,10 @@ Jun 07 15:58:16 web23 nginx[26189]: nginx: the configuration file /etc/nginx/ngi
 Jun 07 15:58:16 web23 nginx[26189]: nginx: configuration file /etc/nginx/nginx.conf test is successful
 Jun 07 15:58:16 web23 systemd[1]: Started The nginx HTTP and reverse proxy server.
 ```
+
+```
+[root@web23 ~]# ss -tulpan | grep 80
+tcp   LISTEN 0      128           0.0.0.0:80        0.0.0.0:*     users:(("nginx",pid=26195,fd=8),("nginx",pid=26194,fd=8),("nginx",pid=26193,fd=8))
+tcp   LISTEN 0      128              [::]:80           [::]:*     users:(("nginx",pid=26195,fd=9),("nginx",pid=26194,fd=9),("nginx",pid=26193,fd=9))
+```
+
