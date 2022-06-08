@@ -110,9 +110,7 @@ success
 [root@web23 ~]# cat /etc/nginx/nginx.conf
 ...
 error_log /var/log/nginx/error.log;
-error_log syslog:server=192.168.50.15:514,tag=nginx_error;
-#access_log syslog:server=192.168.50.15:514,tag=nginx_access,severity=info combined;
-pid /run/nginx.pid;
+error_log syslog:server=192.168.56.15:514,tag=nginx_error;
 ...
 
 http {
@@ -121,8 +119,23 @@ http {
                       '"$http_user_agent" "$http_x_forwarded_for"';
 
     access_log  /var/log/nginx/access.log  main;
-    access_log syslog:server=192.168.50.15:514,tag=nginx_access,severity=info combined;
+    access_log syslog:server=192.168.56.15:514,tag=nginx_access,severity=info combined;
 
 
 ...
+```
+```
+[root@web23 ~]# curl 192.168.56.10
+```
+
+```
+[root@log23 ~]# cat /var/log/rsyslog/web23/nginx_access.log
+Jun  8 15:32:57 web23 nginx_access: 192.168.56.10 - - [08/Jun/2022:15:32:57 +0300] "GET / HTTP/1.1" 200 3429 "-" "curl/7.61.1"
+Jun  8 15:32:59 web23 nginx_access: 192.168.56.10 - - [08/Jun/2022:15:32:59 +0300] "GET / HTTP/1.1" 200 3429 "-" "curl/7.61.1"
+Jun  8 15:32:59 web23 nginx_access: 192.168.56.10 - - [08/Jun/2022:15:32:59 +0300] "GET / HTTP/1.1" 200 3429 "-" "curl/7.61.1"
+Jun  8 15:32:59 web23 nginx_access: 192.168.56.10 - - [08/Jun/2022:15:32:59 +0300] "GET / HTTP/1.1" 200 3429 "-" "curl/7.61.1"
+Jun  8 15:33:00 web23 nginx_access: 192.168.56.10 - - [08/Jun/2022:15:33:00 +0300] "GET / HTTP/1.1" 200 3429 "-" "curl/7.61.1"
+Jun  8 15:33:00 web23 nginx_access: 192.168.56.10 - - [08/Jun/2022:15:33:00 +0300] "GET / HTTP/1.1" 200 3429 "-" "curl/7.61.1"
+[root@log23 ~]#
+
 ```
