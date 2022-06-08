@@ -15,12 +15,11 @@
       state: started
   - name: web23:firewalld http 
     firewalld:
-      service: "{{ rules }}"
+      service: "{{ item }}"
       permanent: true
       immediate: true
       state: enabled
-    vars:
-      rules:
-        - http
-        - https
+    loop:
+      - http
+      - https
 
