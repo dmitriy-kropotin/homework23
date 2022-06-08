@@ -58,21 +58,12 @@ tcp   LISTEN 0      128              [::]:80           [::]:*     users:(("nginx
 ```
 
 ```
-[root@web23 ~]# systemctl stop firewalld
-[root@web23 ~]# systemctl status firewalld
-● firewalld.service - firewalld - dynamic firewall daemon
-   Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; vendor preset: enabled)
-   Active: inactive (dead) since Tue 2022-06-07 16:06:29 MSK; 2s ago
-     Docs: man:firewalld(1)
-  Process: 26270 ExecStart=/usr/sbin/firewalld --nofork --nopid $FIREWALLD_ARGS (code=exited, status=0/SUCCESS)
- Main PID: 26270 (code=exited, status=0/SUCCESS)
-
-Jun 07 16:05:18 web23 systemd[1]: Starting firewalld - dynamic firewall daemon...
-Jun 07 16:05:18 web23 systemd[1]: Started firewalld - dynamic firewall daemon.
-Jun 07 16:05:18 web23 firewalld[26270]: WARNING: AllowZoneDrifting is enabled. This is considered an insecure configura>
-Jun 07 16:06:29 web23 systemd[1]: Stopping firewalld - dynamic firewall daemon...
-Jun 07 16:06:29 web23 systemd[1]: firewalld.service: Succeeded.
-Jun 07 16:06:29 web23 systemd[1]: Stopped firewalld - dynamic firewall daemon.
+[root@web23 ~]# firewall-cmd --add-service=https --permanent
+success
+[root@web23 ~]# firewall-cmd --add-service=http --permanent
+success
+[root@web23 ~]# firewall-cmd --reload
+success
 ```
 
 ```
@@ -99,4 +90,18 @@ input(type="imtcp" port="514")
 $template RemoteLogs,"/var/log/rsyslog/%HOSTNAME%/%PROGRAMNAME%.log"
 *.* ?RemoteLogs
 & ~
+```
+```
+[root@log23 ~]# ss -tulpn | grep 514
+udp   UNCONN 0      0            0.0.0.0:514       0.0.0.0:*    users:(("rsyslogd",pid=5425,fd=4))
+udp   UNCONN 0      0               [::]:514          [::]:*    users:(("rsyslogd",pid=5425,fd=5))
+tcp   LISTEN 0      25           0.0.0.0:514       0.0.0.0:*    users:(("rsyslogd",pid=5425,fd=6))
+tcp   LISTEN 0      25              [::]:514          [::]:*    users:(("rsyslogd",pid=5425,fd=7))
+```
+```
+[root@log23 ~]# firewall-cmd --add-port=514/udp --permanent
+success
+[root@log23 ~]# firewall-cmd --add-port=514/tcp --permanent
+success
+[root@log23 ~]# firewall-cmd --reload
 ```
