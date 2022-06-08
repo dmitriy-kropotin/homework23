@@ -139,3 +139,157 @@ Jun  8 15:33:00 web23 nginx_access: 192.168.56.10 - - [08/Jun/2022:15:33:00 +030
 [root@log23 ~]#
 
 ```
+
+```
+[root@web23 ~]# rpm -qa | grep audit
+audit-3.0.7-2.el8.2.x86_64
+audit-libs-3.0.7-2.el8.2.x86_64
+```
+
+```
+[root@web23 ~]# cat /etc/audit/rules.d/audit.rules
+## First rule - delete all
+-D
+
+## Increase the buffers to survive stress events.
+## Make this bigger for busy systems
+-b 8192
+
+## This determine how long to wait in burst of events
+--backlog_wait_time 60000
+
+## Set failure mode to syslog
+-f 1
+-w /etc/nginx/nginx.conf -p wa -k nginx_conf
+-w /etc/nginx/default.d/ -p wa -k nginx_conf
+```
+
+```
+[root@web23 ~]# service auditd restart
+Stopping logging:
+Redirecting start to /bin/systemctl start auditd.service
+```
+
+```
+[root@web23 ~]# dnf install audispd-plugins
+Last metadata expiration check: 3:33:18 ago on Wed 08 Jun 2022 12:08:50 PM MSK.
+Dependencies resolved.
+============================================================================================================================================================================================================================================
+ Package                                                       Architecture                                         Version                                                      Repository                                            Size
+============================================================================================================================================================================================================================================
+Installing:
+ audispd-plugins                                               x86_64                                               3.0.7-2.el8.2                                                baseos                                                47 k
+
+Transaction Summary
+============================================================================================================================================================================================================================================
+Install  1 Package
+
+Total download size: 47 k
+Installed size: 72 k
+Is this ok [y/N]: y
+Downloading Packages:
+audispd-plugins-3.0.7-2.el8.2.x86_64.rpm                                                                                                                                                                    176 kB/s |  47 kB     00:00
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                                                                                                       175 kB/s |  47 kB     00:00
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                                                                                                                                    1/1
+  Installing       : audispd-plugins-3.0.7-2.el8.2.x86_64                                                                                                                                                                               1/1
+  Running scriptlet: audispd-plugins-3.0.7-2.el8.2.x86_64                                                                                                                                                                               1/1
+  Verifying        : audispd-plugins-3.0.7-2.el8.2.x86_64                                                                                                                                                                               1/1
+
+Installed:
+  audispd-plugins-3.0.7-2.el8.2.x86_64
+
+Complete!
+[root@web23 ~]#
+```
+
+
+```
+[root@web23 ~]# cat /etc/audit/auditd.conf
+#
+# This file controls the configuration of the audit daemon
+#
+
+local_events = yes
+write_logs = yes
+log_file = /var/log/audit/audit.log
+log_group = root
+log_format = RAW
+flush = INCREMENTAL_ASYNC
+freq = 50
+max_log_file = 8
+num_logs = 5
+priority_boost = 4
+name_format = HOSTNAME
+##name = mydomain
+max_log_file_action = ROTATE
+space_left = 75
+space_left_action = SYSLOG
+verify_email = yes
+action_mail_acct = root
+admin_space_left = 50
+admin_space_left_action = SUSPEND
+disk_full_action = SUSPEND
+disk_error_action = SUSPEND
+use_libwrap = yes
+##tcp_listen_port = 60
+tcp_listen_queue = 5
+tcp_max_per_addr = 1
+##tcp_client_ports = 1024-65535
+tcp_client_max_idle = 0
+transport = TCP
+krb5_principal = auditd
+##krb5_key_file = /etc/audit/audit.key
+distribute_network = no
+q_depth = 1200
+overflow_action = SYSLOG
+max_restarts = 10
+plugin_dir = /etc/audit/plugins.d
+end_of_event_timeout = 2
+```
+
+```
+[root@web23 ~]# cat /etc/audit/audisp-remote.conf
+#
+# This file controls the configuration of the audit remote
+# logging subsystem, audisp-remote.
+#
+
+remote_server = 192.168.56.15
+port = 60
+##local_port =
+transport = tcp
+queue_file = /var/spool/audit/remote.log
+mode = immediate
+queue_depth = 10240
+format = managed
+network_retry_time = 1
+max_tries_per_record = 3
+max_time_per_record = 5
+heartbeat_timeout = 0
+
+network_failure_action = stop
+disk_low_action = ignore
+disk_full_action = warn_once
+disk_error_action = warn_once
+remote_ending_action = reconnect
+generic_error_action = syslog
+generic_warning_action = syslog
+queue_error_action = stop
+overflow_action = syslog
+startup_failure_action = warn_once_continue
+
+##krb5_principal =
+##krb5_client_name = auditd
+##krb5_key_file = /etc/audisp/audisp-remote.key
+
+```
+
+```
+
+```
