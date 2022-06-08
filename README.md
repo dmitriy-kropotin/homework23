@@ -105,3 +105,24 @@ success
 success
 [root@log23 ~]# firewall-cmd --reload
 ```
+
+```
+[root@web23 ~]# cat /etc/nginx/nginx.conf
+...
+error_log /var/log/nginx/error.log;
+error_log syslog:server=192.168.50.15:514,tag=nginx_error;
+#access_log syslog:server=192.168.50.15:514,tag=nginx_access,severity=info combined;
+pid /run/nginx.pid;
+...
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+    access_log syslog:server=192.168.50.15:514,tag=nginx_access,severity=info combined;
+
+
+...
+```
