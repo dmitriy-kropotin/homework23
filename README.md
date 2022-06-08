@@ -75,3 +75,28 @@ Jun 07 16:06:29 web23 systemd[1]: firewalld.service: Succeeded.
 Jun 07 16:06:29 web23 systemd[1]: Stopped firewalld - dynamic firewall daemon.
 ```
 
+```
+[root@log23 ~]# dnf list rsyslog
+Last metadata expiration check: 0:55:12 ago on Wed 08 Jun 2022 09:25:57 AM UTC.
+Installed Packages
+rsyslog.x86_64                                       8.2102.0-7.el8                                           @AppStream
+Available Packages
+rsyslog.x86_64                                       8.2102.0-7.el8_6.1                                       appstream
+```
+
+```
+# Provides UDP syslog reception
+# for parameters see http://www.rsyslog.com/doc/imudp.html
+module(load="imudp") # needs to be done just once
+input(type="imudp" port="514")
+
+# Provides TCP syslog reception
+# for parameters see http://www.rsyslog.com/doc/imtcp.html
+module(load="imtcp") # needs to be done just once
+input(type="imtcp" port="514")
+...
+#Add remote logs
+$template RemoteLogs,"/var/log/rsyslog/%HOSTNAME%/%PROGRAMNAME%.log"
+*.* ?RemoteLogs
+& ~
+```
