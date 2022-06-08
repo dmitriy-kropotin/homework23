@@ -1,7 +1,15 @@
 ---
-- hosts: log23 # server ns01 provision
+- hosts: web23 # server ns01 provision
   become: true
   tasks:
-  - name: set timezone to Europe/Moscow
+  - name: web23:set timezone to Europe/Moscow
     timezone:
       name: Europe/Moscow
+  - name: web23:nginx
+    dnf:
+      name: nginx
+      state: latest
+  - name: web23:nginx start
+    systemd:
+      name: nginx
+      state: started
