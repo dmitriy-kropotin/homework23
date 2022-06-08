@@ -28,4 +28,13 @@ Vagrant.configure("2") do |config|
          end
      end
   end
+    config.vm.provision "ansible" do |ansible|
+    #ansible.verbose = "vvv"
+    ansible.playbook = "play.yml"
+    #ansible.groups = {
+    #  "ddns_lab" => ["ns01"],
+    #  "ddns_lab" => ["client"]
+    #}
+    ansible.become = "true"
+  end
 end
