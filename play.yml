@@ -1,0 +1,7 @@
+---
+- hosts: log23 # server ns01 provision
+  become: true
+  tasks:
+  - name: set timezone to Europe/Moscow
+    timezone:
+      name: Europe/Moscow
