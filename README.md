@@ -291,5 +291,25 @@ startup_failure_action = warn_once_continue
 ```
 
 ```
+[root@log23 ~]# firewall-cmd --add-port=60/tcp --permanent
+success
+[root@log23 ~]# firewall-cmd --reload
+success
+```
 
+```
+node=web23 type=PROCTITLE msg=audit(1654693294.461:1263): proctitle=76696D002F6574632F6E67696E782F6E67696E782E636F6E66
+node=web23 type=SYSCALL msg=audit(1654693294.489:1264): arch=c000003e syscall=188 success=yes exit=0 a0=5596b7ed2b90 a1=7f7ac5f58e5e a2=5596b8115970 a3=24 items=1 ppid=27585 pid=28173 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm="vim" exe="/usr/bin/vim" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="nginx_conf"
+node=web23 type=CWD msg=audit(1654693294.489:1264): cwd="/root"
+node=web23 type=PATH msg=audit(1654693294.489:1264): item=0 name="/etc/nginx/nginx.conf" inode=784835 dev=fd:00 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:httpd_config_t:s0 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+node=web23 type=PROCTITLE msg=audit(1654693294.489:1264): proctitle=76696D002F6574632F6E67696E782F6E67696E782E636F6E66
+node=web23 type=SYSCALL msg=audit(1654693294.489:1265): arch=c000003e syscall=91 success=yes exit=0 a0=5 a1=81a4 a2=7ffd250e4560 a3=24 items=1 ppid=27585 pid=28173 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm="vim" exe="/usr/bin/vim" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="nginx_conf"
+node=web23 type=CWD msg=audit(1654693294.489:1265): cwd="/root"
+node=web23 type=PATH msg=audit(1654693294.489:1265): item=0 name=(null) inode=784835 dev=fd:00 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:httpd_config_t:s0 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+node=web23 type=PROCTITLE msg=audit(1654693294.489:1265): proctitle=76696D002F6574632F6E67696E782F6E67696E782E636F6E66
+node=web23 type=SYSCALL msg=audit(1654693294.489:1266): arch=c000003e syscall=188 success=yes exit=0 a0=5596b7ed2b90 a1=7f7ac5b0922f a2=5596b8126680 a3=1c items=1 ppid=27585 pid=28173 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm="vim" exe="/usr/bin/vim" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="nginx_conf"
+node=web23 type=CWD msg=audit(1654693294.489:1266): cwd="/root"
+node=web23 type=PATH msg=audit(1654693294.489:1266): item=0 name="/etc/nginx/nginx.conf" inode=784835 dev=fd:00 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:httpd_config_t:s0 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+node=web23 type=PROCTITLE msg=audit(1654693294.489:1266): proctitle=76696D002F6574632F6E67696E782F6E67696E782E636F6E66
+[root@log23 ~]#
 ```
