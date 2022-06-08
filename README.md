@@ -298,6 +298,8 @@ success
 ```
 
 ```
+[root@log23 ~]# cat /var/log/audit/audit.log | grep web
+...
 node=web23 type=PROCTITLE msg=audit(1654693294.461:1263): proctitle=76696D002F6574632F6E67696E782F6E67696E782E636F6E66
 node=web23 type=SYSCALL msg=audit(1654693294.489:1264): arch=c000003e syscall=188 success=yes exit=0 a0=5596b7ed2b90 a1=7f7ac5f58e5e a2=5596b8115970 a3=24 items=1 ppid=27585 pid=28173 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=6 comm="vim" exe="/usr/bin/vim" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="nginx_conf"
 node=web23 type=CWD msg=audit(1654693294.489:1264): cwd="/root"
