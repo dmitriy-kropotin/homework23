@@ -47,6 +47,13 @@
       owner: root
       group: root
       mode: '0644'
+  - name: au-remote.conf conf file and  restart
+    template:
+      src: up/au-remote.conf
+      dest: /etc/audit/plugins.d/au-remote.conf
+      owner: root
+      group: root
+      mode: '0644'  
   - name: auditd.conf conf file and  restart
     template:
       src: up/audisp-remote.conf
