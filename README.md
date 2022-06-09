@@ -1,15 +1,20 @@
 # homework23
 
+1. Устнавливаю временную зону на web23
+
 ```
 [root@web23 ~]# cp /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 cp: overwrite '/etc/localtime'? y
 ```
 
+2. Все ок
 
 ```
 [root@web23 ~]# date
 Tue Jun  7 15:51:24 MSK 2022
 ```
+
+3. Устанавливаю nginx
 
 ```
 [root@web23 ~]# dnf install -y nginx
@@ -27,6 +32,8 @@ Installing:
 ...
 Complete!
 ```
+
+4. Запускаю nginx
 
 ```
 [root@web23 ~]# systemctl start nginx
@@ -51,11 +58,15 @@ Jun 07 15:58:16 web23 nginx[26189]: nginx: configuration file /etc/nginx/nginx.c
 Jun 07 15:58:16 web23 systemd[1]: Started The nginx HTTP and reverse proxy server.
 ```
 
+5. Проверяю порт
+
 ```
 [root@web23 ~]# ss -tulpan | grep 80
 tcp   LISTEN 0      128           0.0.0.0:80        0.0.0.0:*     users:(("nginx",pid=26195,fd=8),("nginx",pid=26194,fd=8),("nginx",pid=26193,fd=8))
 tcp   LISTEN 0      128              [::]:80           [::]:*     users:(("nginx",pid=26195,fd=9),("nginx",pid=26194,fd=9),("nginx",pid=26193,fd=9))
 ```
+
+6. Открываю в файрволе
 
 ```
 [root@web23 ~]# firewall-cmd --add-service=https --permanent
@@ -66,6 +77,8 @@ success
 success
 ```
 
+7. Проверяю rsyslog на log23
+
 ```
 [root@log23 ~]# dnf list rsyslog
 Last metadata expiration check: 0:55:12 ago on Wed 08 Jun 2022 09:25:57 AM UTC.
@@ -75,7 +88,11 @@ Available Packages
 rsyslog.x86_64                                       8.2102.0-7.el8_6.1                                       appstream
 ```
 
+8. Редактирую rsyslog.conf, включаю прием по tcp и udp, настриваю шаблон файлов 
+
 ```
+cat /etc/rsyslog.conf
+...
 # Provides UDP syslog reception
 # for parameters see http://www.rsyslog.com/doc/imudp.html
 module(load="imudp") # needs to be done just once
@@ -91,6 +108,9 @@ $template RemoteLogs,"/var/log/rsyslog/%HOSTNAME%/%PROGRAMNAME%.log"
 *.* ?RemoteLogs
 & ~
 ```
+
+9. Перезапускаю rsyslog и проверяю, что порты открыты
+
 ```
 [root@log23 ~]# ss -tulpn | grep 514
 udp   UNCONN 0      0            0.0.0.0:514       0.0.0.0:*    users:(("rsyslogd",pid=5425,fd=4))
@@ -98,6 +118,9 @@ udp   UNCONN 0      0               [::]:514          [::]:*    users:(("rsyslog
 tcp   LISTEN 0      25           0.0.0.0:514       0.0.0.0:*    users:(("rsyslogd",pid=5425,fd=6))
 tcp   LISTEN 0      25              [::]:514          [::]:*    users:(("rsyslogd",pid=5425,fd=7))
 ```
+
+10. Настриваю файрвол
+
 ```
 [root@log23 ~]# firewall-cmd --add-port=514/udp --permanent
 success
@@ -105,6 +128,8 @@ success
 success
 [root@log23 ~]# firewall-cmd --reload
 ```
+
+11. В параметра nginx указываю, куда отсылать логи
 
 ```
 [root@web23 ~]# cat /etc/nginx/nginx.conf
@@ -124,9 +149,14 @@ http {
 
 ...
 ```
+
+12. Перезапускаю nginx и несколько раз дергаю nginx 
+
 ```
 [root@web23 ~]# curl 192.168.56.10
 ```
+
+13. Провеоряю на сервере log23 - логи от nginx летят
 
 ```
 [root@log23 ~]# cat /var/log/rsyslog/web23/nginx_access.log
@@ -139,6 +169,8 @@ Jun  8 15:33:00 web23 nginx_access: 192.168.56.10 - - [08/Jun/2022:15:33:00 +030
 [root@log23 ~]#
 
 ```
+
+14. Настраиваю аудит файла /etc/nginx/nginx.conf
 
 ```
 [root@web23 ~]# rpm -qa | grep audit
