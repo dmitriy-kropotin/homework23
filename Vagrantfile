@@ -2,13 +2,13 @@
 # vim: set ft=ruby :
 
 MACHINES = {
+  :log23 => {
+        :box_name => "generic/rocky8",
+        :ip_addr => '192.168.56.15'
+  },
   :web23 => {
         :box_name => "generic/rocky8",
         :ip_addr => '192.168.56.10'
-  },
-   :log23=> {
-        :box_name => "generic/rocky8",
-        :ip_addr => '192.168.56.15'
   }
 }
 
