@@ -22,7 +22,7 @@
     loop:
       - http
       - https
-  - name: rsyslog conf file and  restart
+  - name: nginx conf file and  restart
     template:
       src: up/nginx.conf
       dest: /etc/nginx/nginx.conf
