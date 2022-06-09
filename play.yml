@@ -42,7 +42,7 @@
       mode: '0644'
   - name: auditd.conf conf file
     template:
-      src: up/auditd.conf
+      src: up/auditd.conf.web23
       dest: /etc/audit/auditd.conf
       owner: root
       group: root
@@ -56,7 +56,6 @@
       mode: '0644'
     notify:
       - restart auditd
-   
   handlers: 
     - name: restart nginx
       systemd:
@@ -79,7 +78,7 @@
       - 514/udp
       - 514/tcp
       - 60/tcp
-  - name: rsyslog conf file and  restart
+  - name: log23:rsyslog conf file and  restart
     template:
       src: up/rsyslog.conf
       dest: /etc/rsyslog.conf
@@ -88,9 +87,20 @@
       mode: '0644'
     notify:
       - restart rsyslog
+  - name: log23:auditd.conf conf file
+    template:
+      src: up/auditd.conf.log23
+      dest: /etc/audit/auditd.conf
+      owner: root
+      group: root
+      mode: '0644'
+    notify:
+      - restart auditd
   handlers:
     - name: restart rsyslog
       systemd:
         name: rsyslog
         state: restarted
         enabled: yes 
+    - name: restart auditd
+      command: service auditd restart
