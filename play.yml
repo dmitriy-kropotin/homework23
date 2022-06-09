@@ -30,7 +30,13 @@
       group: root
       mode: '0644'
     notify:
-      - restart nginx  
+      - restart nginx
+  handlers: 
+    - name: restart nginx
+      systemd:
+        name: nginx
+        state: restarted
+        enabled: yes 
       
 - hosts: log23  # server log23  provision
   become: true
@@ -53,16 +59,9 @@
       mode: '0644'
     notify:
       - restart rsyslog
-      
   handlers:
     - name: restart rsyslog
       systemd:
         name: rsyslog
         state: restarted
         enabled: yes 
-    - name: restart nginx
-      systemd:
-        name: nginx
-        state: restarted
-        enabled: yes 
-
