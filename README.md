@@ -170,13 +170,15 @@ Jun  8 15:33:00 web23 nginx_access: 192.168.56.10 - - [08/Jun/2022:15:33:00 +030
 
 ```
 
-14. Настраиваю аудит файла /etc/nginx/nginx.conf
+14. Настраиваю аудит файла /etc/nginx/nginx.conf. Проверяю версию audit
 
 ```
 [root@web23 ~]# rpm -qa | grep audit
 audit-3.0.7-2.el8.2.x86_64
 audit-libs-3.0.7-2.el8.2.x86_64
 ```
+
+15. Прописываю правило аудита
 
 ```
 [root@web23 ~]# cat /etc/audit/rules.d/audit.rules
@@ -196,11 +198,37 @@ audit-libs-3.0.7-2.el8.2.x86_64
 -w /etc/nginx/default.d/ -p wa -k nginx_conf
 ```
 
+16. Перезапускаю аудит и проверяю
+
 ```
 [root@web23 ~]# service auditd restart
 Stopping logging:
 Redirecting start to /bin/systemctl start auditd.service
 ```
+
+17. Проверяю наличе событий в /var/log/audit/audit.log
+
+```
+[root@web23 ~]# cat /var/log/audit/audit.log | grep nginx
+...
+
+node=web23 type=PATH msg=audit(1654783334.077:1214): item=0 name="/etc/nginx/default.d" inode=134440337 dev=fd:00 mode=040755 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:httpd_config_t:s0 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+node=web23 type=SYSCALL msg=audit(1654783371.958:1254): arch=c000003e syscall=82 success=yes exit=0 a0=5595e6a35c00 a1=5595e6a8a520 a2=fffffffffffffe98 a3=81a4 items=4 ppid=7130 pid=7132 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm="vim" exe="/usr/bin/vim" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="nginx_conf"
+node=web23 type=PATH msg=audit(1654783371.958:1254): item=0 name="/etc/nginx/" inode=850504 dev=fd:00 mode=040755 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:httpd_config_t:s0 nametype=PARENT cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+node=web23 type=PATH msg=audit(1654783371.958:1254): item=1 name="/etc/nginx/" inode=850504 dev=fd:00 mode=040755 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:httpd_config_t:s0 nametype=PARENT cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+node=web23 type=PATH msg=audit(1654783371.958:1254): item=2 name="/etc/nginx/nginx.conf" inode=134289980 dev=fd:00 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:httpd_config_t:s0 nametype=DELETE cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+node=web23 type=PATH msg=audit(1654783371.958:1254): item=3 name="/etc/nginx/nginx.conf~" inode=134289980 dev=fd:00 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:httpd_config_t:s0 nametype=CREATE cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+node=web23 type=SYSCALL msg=audit(1654783371.958:1255): arch=c000003e syscall=257 success=yes exit=5 a0=ffffff9c a1=5595e6a35c00 a2=41 a3=1a4 items=2 ppid=7130 pid=7132 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm="vim" exe="/usr/bin/vim" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="nginx_conf"
+node=web23 type=PATH msg=audit(1654783371.958:1255): item=0 name="/etc/nginx/" inode=850504 dev=fd:00 mode=040755 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:httpd_config_t:s0 nametype=PARENT cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+node=web23 type=PATH msg=audit(1654783371.958:1255): item=1 name="/etc/nginx/nginx.conf" inode=607669 dev=fd:00 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:httpd_config_t:s0 nametype=CREATE cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+node=web23 type=SYSCALL msg=audit(1654783371.992:1256): arch=c000003e syscall=188 success=yes exit=0 a0=5595e6a35c00 a1=7f021f5d9e5e a2=5595e6a88e40 a3=24 items=1 ppid=7130 pid=7132 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm="vim" exe="/usr/bin/vim" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="nginx_conf"
+node=web23 type=PATH msg=audit(1654783371.992:1256): item=0 name="/etc/nginx/nginx.conf" inode=607669 dev=fd:00 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:httpd_config_t:s0 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+node=web23 type=SYSCALL msg=audit(1654783371.992:1257): arch=c000003e syscall=91 success=yes exit=0 a0=5 a1=81a4 a2=7ffe224b4070 a3=24 items=1 ppid=7130 pid=7132 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm="vim" exe="/usr/bin/vim" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="nginx_conf"
+node=web23 type=SYSCALL msg=audit(1654783371.992:1258): arch=c000003e syscall=188 success=yes exit=0 a0=5595e6a35c00 a1=7f021f18a22f a2=5595e6c765a0 a3=1c items=1 ppid=7130 pid=7132 auid=1000 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=5 comm="vim" exe="/usr/bin/vim" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="nginx_conf"
+node=web23 type=PATH msg=audit(1654783371.992:1258): item=0 name="/etc/nginx/nginx.conf" inode=607669 dev=fd:00 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:httpd_config_t:s0 nametype=NORMAL cap_fp=0 cap_fi=0 cap_fe=0 cap_fver=0 cap_frootid=0
+```
+
+18. Настраиваю отправку журналов audit на удаленный сервер. Устанавливаю plugin
 
 ```
 [root@web23 ~]# dnf install audispd-plugins
@@ -216,29 +244,15 @@ Transaction Summary
 ============================================================================================================================================================================================================================================
 Install  1 Package
 
-Total download size: 47 k
-Installed size: 72 k
-Is this ok [y/N]: y
-Downloading Packages:
-audispd-plugins-3.0.7-2.el8.2.x86_64.rpm                                                                                                                                                                    176 kB/s |  47 kB     00:00
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Total                                                                                                                                                                                                       175 kB/s |  47 kB     00:00
-Running transaction check
-Transaction check succeeded.
-Running transaction test
-Transaction test succeeded.
-Running transaction
-  Preparing        :                                                                                                                                                                                                                    1/1
-  Installing       : audispd-plugins-3.0.7-2.el8.2.x86_64                                                                                                                                                                               1/1
-  Running scriptlet: audispd-plugins-3.0.7-2.el8.2.x86_64                                                                                                                                                                               1/1
-  Verifying        : audispd-plugins-3.0.7-2.el8.2.x86_64                                                                                                                                                                               1/1
-
+...
 Installed:
   audispd-plugins-3.0.7-2.el8.2.x86_64
 
 Complete!
-[root@web23 ~]#
 ```
+
+19. Включаю plugin
+
 ```
 [root@web23 ~]# cat /etc/audit/plugins.d/au-remote.conf
 
@@ -255,86 +269,30 @@ format = string
 
 ```
 
+20. Настраиваю auditd.conf
+
 ```
 [root@web23 ~]# cat /etc/audit/auditd.conf
-#
-# This file controls the configuration of the audit daemon
-#
-
-local_events = yes
-write_logs = yes
-log_file = /var/log/audit/audit.log
-log_group = root
+..
 log_format = RAW
-flush = INCREMENTAL_ASYNC
-freq = 50
-max_log_file = 8
-num_logs = 5
-priority_boost = 4
+...
 name_format = HOSTNAME
-##name = mydomain
-max_log_file_action = ROTATE
-space_left = 75
-space_left_action = SYSLOG
-verify_email = yes
-action_mail_acct = root
-admin_space_left = 50
-admin_space_left_action = SUSPEND
-disk_full_action = SUSPEND
-disk_error_action = SUSPEND
-use_libwrap = yes
-##tcp_listen_port = 60
-tcp_listen_queue = 5
-tcp_max_per_addr = 1
-##tcp_client_ports = 1024-65535
-tcp_client_max_idle = 0
-transport = TCP
-krb5_principal = auditd
-##krb5_key_file = /etc/audit/audit.key
-distribute_network = no
-q_depth = 1200
-overflow_action = SYSLOG
-max_restarts = 10
-plugin_dir = /etc/audit/plugins.d
-end_of_event_timeout = 2
+....
 ```
+
+21. Указываю параметры сервер для отправки событий audit
 
 ```
 [root@web23 ~]# cat /etc/audit/audisp-remote.conf
-#
-# This file controls the configuration of the audit remote
-# logging subsystem, audisp-remote.
-#
-
+...
 remote_server = 192.168.56.15
 port = 60
-##local_port =
-transport = tcp
-queue_file = /var/spool/audit/remote.log
-mode = immediate
-queue_depth = 10240
-format = managed
-network_retry_time = 1
-max_tries_per_record = 3
-max_time_per_record = 5
-heartbeat_timeout = 0
-
-network_failure_action = stop
-disk_low_action = ignore
-disk_full_action = warn_once
-disk_error_action = warn_once
-remote_ending_action = reconnect
-generic_error_action = syslog
-generic_warning_action = syslog
-queue_error_action = stop
-overflow_action = syslog
-startup_failure_action = warn_once_continue
-
-##krb5_principal =
-##krb5_client_name = auditd
-##krb5_key_file = /etc/audisp/audisp-remote.key
+...
 
 ```
+
+22. Открываю порт в firewall
+
 
 ```
 [root@log23 ~]# firewall-cmd --add-port=60/tcp --permanent
@@ -342,6 +300,8 @@ success
 [root@log23 ~]# firewall-cmd --reload
 success
 ```
+
+23. Проверяю наличие событий аудита на log23. События с web23 есть!
 
 ```
 [root@log23 ~]# cat /var/log/audit/audit.log | grep web
