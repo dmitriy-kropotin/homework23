@@ -7,8 +7,11 @@
       name: Europe/Moscow
   - name: web23:nginx
     dnf:
-      name: nginx
+      name: "{{ item }}"
       state: latest
+    loop:
+      - nginx
+      - audispd-plugins
   - name: web23:nginx start
     systemd:
       name: nginx
