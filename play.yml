@@ -5,13 +5,12 @@
   - name: web23:set timezone to Europe/Moscow
     timezone:
       name: Europe/Moscow
-  - name: web23:nginx
+  - name: web23:nginx,audispd-plugins
     dnf:
-      name: "{{ item }}"
+      name:
+        - nginx
+        - audispd-plugins
       state: latest
-    loop:
-      - nginx
-      - audispd-plugins
   - name: web23:nginx start
     systemd:
       name: nginx
