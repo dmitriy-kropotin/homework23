@@ -1,5 +1,5 @@
 ---
-- hosts: web23 # server ns01 provision
+- hosts: web23 # server web23 provision
   become: true
   tasks:
   - name: web23:set timezone to Europe/Moscow
@@ -22,4 +22,17 @@
     loop:
       - http
       - https
+      
+- hosts: log23  # server log23  provision
+  become: true
+  tasks:
+  - name: log23:firewalld syslog
+    firewalld:
+      port: "{{ item }}"
+      permanent: true
+      immediate: true
+      state: enabled
+    loop:
+      - 514/udp
+      - 514/tcp
 
