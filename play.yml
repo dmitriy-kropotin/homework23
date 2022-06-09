@@ -35,4 +35,20 @@
     loop:
       - 514/udp
       - 514/tcp
+  - name: rsyslog conf file and  restart
+    template:
+      src: up/rsyslog.conf
+      dest: /etc/rsyslog.conf
+      owner: root
+      group: root
+      mode: '0644'
+    notify:
+      - restart rsyslog
+      
+  handlers:
+    - name: restart rsyslog
+      systemd:
+        name: rsyslog
+        state: restarted
+        enabled: yes  
 
