@@ -13,7 +13,7 @@
     systemd:
       name: nginx
       state: started
-  - name: web23:firewalld http 
+  - name: web23:firewalld http,https
     firewalld:
       service: "{{ item }}"
       permanent: true
