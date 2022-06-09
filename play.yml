@@ -30,13 +30,25 @@
       group: root
       mode: '0644'
     notify:
-      - restart nginx
+      - restart nginx      
+  - name: audit.rules conf file and  restart
+    template:
+      src: up/audit.rules
+      dest: /etc/audit/rules.d/audit.rules
+      owner: root
+      group: root
+      mode: '0644'
+    notify:
+      - restart auditd
+      
   handlers: 
     - name: restart nginx
       systemd:
         name: nginx
         state: restarted
         enabled: yes 
+    - name: restart auditd
+      command: service auditd restart
       
 - hosts: log23  # server log23  provision
   become: true
