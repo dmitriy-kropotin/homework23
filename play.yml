@@ -55,7 +55,7 @@
 - hosts: log23  # server log23  provision
   become: true
   tasks:
-  - name: log23:firewalld syslog
+  - name: log23:firewalld syslog,auditd
     firewalld:
       port: "{{ item }}"
       permanent: true
@@ -64,6 +64,7 @@
     loop:
       - 514/udp
       - 514/tcp
+      - 60/tcp
   - name: rsyslog conf file and  restart
     template:
       src: up/rsyslog.conf
