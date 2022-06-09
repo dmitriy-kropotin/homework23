@@ -24,7 +24,7 @@
     loop:
       - http
       - https
-  - name: nginx conf file and  restart
+  - name: web23:nginx conf file and  restart
     template:
       src: up/nginx.conf
       dest: /etc/nginx/nginx.conf
@@ -33,28 +33,28 @@
       mode: '0644'
     notify:
       - restart nginx      
-  - name: audit.rules conf file
+  - name: web23:audit.rules conf file
     template:
       src: up/audit.rules
       dest: /etc/audit/rules.d/audit.rules
       owner: root
       group: root
       mode: '0644'
-  - name: auditd.conf conf file
+  - name: web23:auditd.conf conf file
     template:
       src: up/auditd.conf.web23
       dest: /etc/audit/auditd.conf
       owner: root
       group: root
       mode: '0644'
-  - name: au-remote.conf conf file and  restart
+  - name: web23:au-remote.conf conf file
     template:
       src: up/au-remote.conf
       dest: /etc/audit/plugins.d/au-remote.conf
       owner: root
       group: root
       mode: '0644'  
-  - name: auditd.conf conf file and  restart
+  - name: web23:auditd.conf conf file and  restart
     template:
       src: up/audisp-remote.conf
       dest: /etc/audit/audisp-remote.conf
