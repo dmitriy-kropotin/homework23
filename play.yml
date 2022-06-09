@@ -33,16 +33,30 @@
       mode: '0644'
     notify:
       - restart nginx      
-  - name: audit.rules conf file and  restart
+  - name: audit.rules conf file
     template:
       src: up/audit.rules
       dest: /etc/audit/rules.d/audit.rules
       owner: root
       group: root
       mode: '0644'
+  - name: auditd.conf conf file
+    template:
+      src: up/auditd.conf
+      dest: /etc/audit/auditd.conf
+      owner: root
+      group: root
+      mode: '0644'
+  - name: auditd.conf conf file and  restart
+    template:
+      src: up/audisp-remote.conf
+      dest: /etc/audit/audisp-remote.conf
+      owner: root
+      group: root
+      mode: '0644'
     notify:
       - restart auditd
-      
+   
   handlers: 
     - name: restart nginx
       systemd:
