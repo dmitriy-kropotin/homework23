@@ -207,7 +207,21 @@ Installed:
 Complete!
 [root@web23 ~]#
 ```
+```
+[root@web23 ~]# cat /etc/audit/plugins.d/au-remote.conf
 
+# This file controls the audispd data path to the
+# remote event logger. This plugin will send events to
+# a remote machine (Central Logger).
+
+active = yes
+direction = out
+path = /sbin/audisp-remote
+type = always
+#args =
+format = string
+
+```
 
 ```
 [root@web23 ~]# cat /etc/audit/auditd.conf
